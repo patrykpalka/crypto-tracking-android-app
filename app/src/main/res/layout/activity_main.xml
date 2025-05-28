@@ -1,0 +1,72 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <Button
+        android:id="@+id/fetchButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pobierz ceny kryptowalut" />
+
+    <Button
+        android:id="@+id/fetchSupportedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pobierz wspierane kryptowaluty"
+        android:layout_marginTop="8dp" />
+
+    <EditText
+        android:id="@+id/symbolEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="Symbol kryptowaluty (np. BTC)"
+        android:minHeight="48dp" />
+
+    <EditText
+        android:id="@+id/startDateEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="Data początkowa (rrrr-mm-dd)"
+        android:minHeight="48dp" />
+
+    <EditText
+        android:id="@+id/endDateEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="Data końcowa (rrrr-mm-dd)"
+        android:minHeight="48dp" />
+
+    <EditText
+        android:id="@+id/currencyEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="Waluta (np. usd)"
+        android:minHeight="48dp" />
+
+    <Button
+        android:id="@+id/fetchHistoryButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pobierz historię"
+        android:layout_marginTop="8dp" />
+
+    <Button
+        android:id="@+id/fetchMarketDataButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pobierz dane rynkowe"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/cryptoPricesTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ceny kryptowalut pojawią się tutaj"
+        android:paddingTop="16dp"/>
+</LinearLayout>
