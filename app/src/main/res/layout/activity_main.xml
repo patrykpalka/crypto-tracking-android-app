@@ -1,4 +1,3 @@
-<!-- app/src/main/res/layout/activity_main.xml -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,6 +9,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Pobierz ceny kryptowalut" />
+
+    <Button
+        android:id="@+id/fetchSupportedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pobierz wspierane kryptowaluty"
+        android:layout_marginTop="8dp" />
 
     <TextView
         android:id="@+id/cryptoPricesTextView"
