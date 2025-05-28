@@ -56,6 +56,13 @@
         android:text="Pobierz historię"
         android:layout_marginTop="8dp" />
 
+    <Button
+        android:id="@+id/fetchMarketDataButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pobierz dane rynkowe"
+        android:layout_marginTop="8dp" />
+
     <TextView
         android:id="@+id/cryptoPricesTextView"
         android:layout_width="match_parent"

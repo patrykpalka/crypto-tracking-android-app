@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
     private Button fetchButton;
     private Button fetchSupportedButton;
     private Button fetchHistoryButton;
+    private Button fetchMarketDataButton;
     private EditText symbolEditText;
     private EditText startDateEditText;
     private EditText endDateEditText;
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
         fetchButton = findViewById(R.id.fetchButton);
         fetchSupportedButton = findViewById(R.id.fetchSupportedButton);
         fetchHistoryButton = findViewById(R.id.fetchHistoryButton);
+        fetchMarketDataButton = findViewById(R.id.fetchMarketDataButton);
         symbolEditText = findViewById(R.id.symbolEditText);
         startDateEditText = findViewById(R.id.startDateEditText);
         endDateEditText = findViewById(R.id.endDateEditText);
@@ -43,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         fetchButton.setOnClickListener(v -> fetchCryptoPrices());
         fetchSupportedButton.setOnClickListener(v -> fetchSupportedCoins());
         fetchHistoryButton.setOnClickListener(v -> fetchHistory());
+        fetchMarketDataButton.setOnClickListener(v -> fetchMarketData());
     }
 
     private void fetchCryptoPrices() {
@@ -136,6 +139,41 @@ public class MainActivity extends AppCompatActivity {
             public void onFailure(@NonNull Call<List<CoinPriceResponseDTO>> call, @NonNull Throwable t) {
                 cryptoPricesTextView.setText("Błąd: " + t.getMessage());
                 Log.e("API_ERROR", "Błąd pobierania historii", t);
+            }
+        });
+    }
+
+    private void fetchMarketData() {
+        String symbol = symbolEditText.getText().toString().trim();
+        String currency = currencyEditText.getText().toString().trim();
+        if (symbol.isEmpty()) {
+            cryptoPricesTextView.setText("Podaj symbol kryptowaluty.");
+            return;
+        }
+        String currencyParam = currency.isEmpty() ? null : currency;
+
+        ApiService apiService = RetrofitInstance.getRetrofitInstance().create(ApiService.class);
+        Call<CoinMarketDataResponseDTO> call = apiService.getCryptocurrencyMarketData(symbol, currencyParam);
+        call.enqueue(new Callback<CoinMarketDataResponseDTO>() {
+            @Override
+            public void onResponse(@NonNull Call<CoinMarketDataResponseDTO> call, @NonNull Response<CoinMarketDataResponseDTO> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    CoinMarketDataResponseDTO dto = response.body();
+                    String result = "Symbol: " + dto.symbol() + "\n"
+                            + "Market Cap: " + dto.marketCap() + "\n"
+                            + "Volume 24h: " + dto.volume24h() + "\n"
+                            + "Circulating Supply: " + dto.circulatingSupply() + "\n"
+                            + "Waluta: " + dto.currency();
+                    cryptoPricesTextView.setText(result);
+                } else {
+                    cryptoPricesTextView.setText("Błąd pobierania danych rynkowych.");
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<CoinMarketDataResponseDTO> call, @NonNull Throwable t) {
+                cryptoPricesTextView.setText("Błąd: " + t.getMessage());
+                Log.e("API_ERROR", "Błąd pobierania danych rynkowych", t);
             }
         });
     }

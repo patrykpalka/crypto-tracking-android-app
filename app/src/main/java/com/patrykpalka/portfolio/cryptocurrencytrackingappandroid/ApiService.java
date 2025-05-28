@@ -20,4 +20,10 @@ public interface ApiService {
             @Query("end") String end,
             @Query("currency") String currency
     );
+
+    @GET("/api/crypto/market/{symbol}")
+    Call<CoinMarketDataResponseDTO> getCryptocurrencyMarketData(
+            @Path("symbol") String symbol,
+            @Query("currency") String currency
+    );
 }
