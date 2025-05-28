@@ -17,6 +17,45 @@
         android:text="Pobierz wspierane kryptowaluty"
         android:layout_marginTop="8dp" />
 
+    <EditText
+        android:id="@+id/symbolEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="Symbol kryptowaluty (np. BTC)"
+        android:minHeight="48dp" />
+
+    <EditText
+        android:id="@+id/startDateEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="Data początkowa (rrrr-mm-dd)"
+        android:minHeight="48dp" />
+
+    <EditText
+        android:id="@+id/endDateEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="Data końcowa (rrrr-mm-dd)"
+        android:minHeight="48dp" />
+
+    <EditText
+        android:id="@+id/currencyEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="Waluta (np. usd)"
+        android:minHeight="48dp" />
+
+    <Button
+        android:id="@+id/fetchHistoryButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pobierz historię"
+        android:layout_marginTop="8dp" />
+
     <TextView
         android:id="@+id/cryptoPricesTextView"
         android:layout_width="match_parent"

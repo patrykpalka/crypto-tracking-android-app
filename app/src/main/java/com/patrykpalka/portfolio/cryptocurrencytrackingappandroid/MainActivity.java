@@ -3,6 +3,7 @@ package com.patrykpalka.portfolio.cryptocurrencytrackingappandroid;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,11 @@ public class MainActivity extends AppCompatActivity {
     private TextView cryptoPricesTextView;
     private Button fetchButton;
     private Button fetchSupportedButton;
+    private Button fetchHistoryButton;
+    private EditText symbolEditText;
+    private EditText startDateEditText;
+    private EditText endDateEditText;
+    private EditText currencyEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +34,15 @@ public class MainActivity extends AppCompatActivity {
         cryptoPricesTextView = findViewById(R.id.cryptoPricesTextView);
         fetchButton = findViewById(R.id.fetchButton);
         fetchSupportedButton = findViewById(R.id.fetchSupportedButton);
+        fetchHistoryButton = findViewById(R.id.fetchHistoryButton);
+        symbolEditText = findViewById(R.id.symbolEditText);
+        startDateEditText = findViewById(R.id.startDateEditText);
+        endDateEditText = findViewById(R.id.endDateEditText);
+        currencyEditText = findViewById(R.id.currencyEditText);
 
         fetchButton.setOnClickListener(v -> fetchCryptoPrices());
         fetchSupportedButton.setOnClickListener(v -> fetchSupportedCoins());
+        fetchHistoryButton.setOnClickListener(v -> fetchHistory());
     }
 
     private void fetchCryptoPrices() {
@@ -83,6 +95,47 @@ public class MainActivity extends AppCompatActivity {
             public void onFailure(@NonNull Call<List<CoinsListDTO>> call, @NonNull Throwable t) {
                 cryptoPricesTextView.setText("Błąd: " + t.getMessage());
                 Log.e("API_ERROR", "Błąd pobierania listy", t);
+            }
+        });
+    }
+
+    private void fetchHistory() {
+        String symbol = symbolEditText.getText().toString().trim();
+        String start = startDateEditText.getText().toString().trim();
+        String end = endDateEditText.getText().toString().trim();
+        String currency = currencyEditText.getText().toString().trim();
+
+        if (symbol.isEmpty() || start.isEmpty() || end.isEmpty()) {
+            cryptoPricesTextView.setText("Podaj symbol, datę początkową i końcową.");
+            return;
+        }
+        if (currency.isEmpty()) {
+            currency = "usd";
+        }
+
+        ApiService apiService = RetrofitInstance.getRetrofitInstance().create(ApiService.class);
+        Call<List<CoinPriceResponseDTO>> call = apiService.getHistoricalPriceData(symbol, start, end, currency);
+        call.enqueue(new Callback<List<CoinPriceResponseDTO>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<CoinPriceResponseDTO>> call, @NonNull Response<List<CoinPriceResponseDTO>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<CoinPriceResponseDTO> history = response.body();
+                    StringBuilder builder = new StringBuilder();
+                    for (CoinPriceResponseDTO dto : history) {
+                        builder.append(dto.date()).append(": ")
+                                .append(dto.price()).append(" ")
+                                .append(dto.currency()).append("\n");
+                    }
+                    cryptoPricesTextView.setText(builder.toString());
+                } else {
+                    cryptoPricesTextView.setText("Błąd pobierania historii.");
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<CoinPriceResponseDTO>> call, @NonNull Throwable t) {
+                cryptoPricesTextView.setText("Błąd: " + t.getMessage());
+                Log.e("API_ERROR", "Błąd pobierania historii", t);
             }
         });
     }
