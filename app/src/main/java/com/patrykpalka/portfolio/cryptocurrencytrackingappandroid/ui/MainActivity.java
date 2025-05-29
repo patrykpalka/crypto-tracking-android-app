@@ -16,6 +16,7 @@ import com.patrykpalka.portfolio.cryptocurrencytrackingappandroid.data.model.Coi
 import com.patrykpalka.portfolio.cryptocurrencytrackingappandroid.data.model.CoinPriceResponseDTO;
 import com.patrykpalka.portfolio.cryptocurrencytrackingappandroid.data.model.CoinsListDTO;
 import com.patrykpalka.portfolio.cryptocurrencytrackingappandroid.data.model.CryptoPricesResponseDTO;
+import com.patrykpalka.portfolio.cryptocurrencytrackingappandroid.util.Formatter;
 
 import java.util.List;
 
@@ -71,13 +72,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(@NonNull Call<List<CryptoPricesResponseDTO>> call, @NonNull Response<List<CryptoPricesResponseDTO>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    StringBuilder builder = new StringBuilder();
-                    for (CryptoPricesResponseDTO dto : response.body()) {
-                        builder.append(dto.symbol()).append(": ")
-                                .append(dto.price()).append(" ")
-                                .append(dto.currency()).append("\n");
-                    }
-                    cryptoPricesTextView.setText(builder.toString());
+                    cryptoPricesTextView.setText(Formatter.formatCryptoPrices(response.body()));
                 } else {
                     setErrorText("Błąd pobierania danych.");
                 }
@@ -96,11 +91,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(@NonNull Call<List<CoinsListDTO>> call, @NonNull Response<List<CoinsListDTO>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    StringBuilder builder = new StringBuilder();
-                    for (CoinsListDTO dto : response.body()) {
-                        builder.append(dto.symbol()).append(" - ").append(dto.name()).append("\n");
-                    }
-                    cryptoPricesTextView.setText(builder.toString());
+                    cryptoPricesTextView.setText(Formatter.formatCoinsList(response.body()));
                 } else {
                     setErrorText("Błąd pobierania listy.");
                 }
@@ -132,13 +123,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(@NonNull Call<List<CoinPriceResponseDTO>> call, @NonNull Response<List<CoinPriceResponseDTO>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    StringBuilder builder = new StringBuilder();
-                    for (CoinPriceResponseDTO dto : response.body()) {
-                        builder.append(dto.date()).append(": ")
-                                .append(dto.price()).append(" ")
-                                .append(dto.currency()).append("\n");
-                    }
-                    cryptoPricesTextView.setText(builder.toString());
+                    cryptoPricesTextView.setText(Formatter.formatHistory(response.body()));
                 } else {
                     setErrorText("Błąd pobierania historii.");
                 }
@@ -165,13 +150,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(@NonNull Call<CoinMarketDataResponseDTO> call, @NonNull Response<CoinMarketDataResponseDTO> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    CoinMarketDataResponseDTO dto = response.body();
-                    String result = "Symbol: " + dto.symbol() + "\n"
-                            + "Market Cap: " + dto.marketCap() + "\n"
-                            + "Volume 24h: " + dto.volume24h() + "\n"
-                            + "Circulating Supply: " + dto.circulatingSupply() + "\n"
-                            + "Waluta: " + dto.currency();
-                    cryptoPricesTextView.setText(result);
+                    cryptoPricesTextView.setText(Formatter.formatMarketData(response.body()));
                 } else {
                     setErrorText("Błąd pobierania danych rynkowych.");
                 }
