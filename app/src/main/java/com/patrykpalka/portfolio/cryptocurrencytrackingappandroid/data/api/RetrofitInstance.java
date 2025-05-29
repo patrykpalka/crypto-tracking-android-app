@@ -1,4 +1,4 @@
-package com.patrykpalka.portfolio.cryptocurrencytrackingappandroid;
+package com.patrykpalka.portfolio.cryptocurrencytrackingappandroid.data.api;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

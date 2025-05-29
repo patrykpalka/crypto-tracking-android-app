@@ -1,4 +1,4 @@
-package com.patrykpalka.portfolio.cryptocurrencytrackingappandroid;
+package com.patrykpalka.portfolio.cryptocurrencytrackingappandroid.ui;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +8,15 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.patrykpalka.portfolio.cryptocurrencytrackingappandroid.R;
+import com.patrykpalka.portfolio.cryptocurrencytrackingappandroid.data.api.ApiService;
+import com.patrykpalka.portfolio.cryptocurrencytrackingappandroid.data.model.CoinMarketDataResponseDTO;
+import com.patrykpalka.portfolio.cryptocurrencytrackingappandroid.data.model.CoinPriceResponseDTO;
+import com.patrykpalka.portfolio.cryptocurrencytrackingappandroid.data.model.CoinsListDTO;
+import com.patrykpalka.portfolio.cryptocurrencytrackingappandroid.data.model.CryptoPricesResponseDTO;
+import com.patrykpalka.portfolio.cryptocurrencytrackingappandroid.data.api.RetrofitInstance;
+
 import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
