@@ -11,13 +11,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.patrykpalka.portfolio.cryptocurrencytrackingappandroid.R;
 import com.patrykpalka.portfolio.cryptocurrencytrackingappandroid.data.api.ApiService;
+import com.patrykpalka.portfolio.cryptocurrencytrackingappandroid.data.api.RetrofitInstance;
 import com.patrykpalka.portfolio.cryptocurrencytrackingappandroid.data.model.CoinMarketDataResponseDTO;
 import com.patrykpalka.portfolio.cryptocurrencytrackingappandroid.data.model.CoinPriceResponseDTO;
 import com.patrykpalka.portfolio.cryptocurrencytrackingappandroid.data.model.CoinsListDTO;
 import com.patrykpalka.portfolio.cryptocurrencytrackingappandroid.data.model.CryptoPricesResponseDTO;
-import com.patrykpalka.portfolio.cryptocurrencytrackingappandroid.data.api.RetrofitInstance;
 
 import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -33,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText endDateEditText;
     private EditText currencyEditText;
 
+    private final ApiService apiService = RetrofitInstance.getRetrofitInstance().create(ApiService.class);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +43,11 @@ public class MainActivity extends AppCompatActivity {
             getSupportActionBar().hide();
         }
         setContentView(R.layout.activity_main);
+        initViews();
+        setListeners();
+    }
 
+    private void initViews() {
         cryptoPricesTextView = findViewById(R.id.cryptoPricesTextView);
         fetchButton = findViewById(R.id.fetchButton);
         fetchSupportedButton = findViewById(R.id.fetchSupportedButton);
@@ -50,7 +57,9 @@ public class MainActivity extends AppCompatActivity {
         startDateEditText = findViewById(R.id.startDateEditText);
         endDateEditText = findViewById(R.id.endDateEditText);
         currencyEditText = findViewById(R.id.currencyEditText);
+    }
 
+    private void setListeners() {
         fetchButton.setOnClickListener(v -> fetchCryptoPrices());
         fetchSupportedButton.setOnClickListener(v -> fetchSupportedCoins());
         fetchHistoryButton.setOnClickListener(v -> fetchHistory());
@@ -58,54 +67,48 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void fetchCryptoPrices() {
-        ApiService apiService = RetrofitInstance.getRetrofitInstance().create(ApiService.class);
-        Call<List<CryptoPricesResponseDTO>> call = apiService.getCryptoPrices();
-        call.enqueue(new Callback<List<CryptoPricesResponseDTO>>() {
+        apiService.getCryptoPrices().enqueue(new Callback<List<CryptoPricesResponseDTO>>() {
             @Override
             public void onResponse(@NonNull Call<List<CryptoPricesResponseDTO>> call, @NonNull Response<List<CryptoPricesResponseDTO>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<CryptoPricesResponseDTO> cryptoPrices = response.body();
                     StringBuilder builder = new StringBuilder();
-                    for (CryptoPricesResponseDTO dto : cryptoPrices) {
+                    for (CryptoPricesResponseDTO dto : response.body()) {
                         builder.append(dto.symbol()).append(": ")
                                 .append(dto.price()).append(" ")
                                 .append(dto.currency()).append("\n");
                     }
                     cryptoPricesTextView.setText(builder.toString());
                 } else {
-                    cryptoPricesTextView.setText("Błąd pobierania danych.");
+                    setErrorText("Błąd pobierania danych.");
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<List<CryptoPricesResponseDTO>> call, @NonNull Throwable t) {
-                cryptoPricesTextView.setText("Błąd: " + t.getMessage());
+                setErrorText("Błąd: " + t.getMessage());
                 Log.e("API_ERROR", "Błąd pobierania danych", t);
             }
         });
     }
 
     private void fetchSupportedCoins() {
-        ApiService apiService = RetrofitInstance.getRetrofitInstance().create(ApiService.class);
-        Call<List<CoinsListDTO>> call = apiService.getCoinsList();
-        call.enqueue(new Callback<List<CoinsListDTO>>() {
+        apiService.getCoinsList().enqueue(new Callback<List<CoinsListDTO>>() {
             @Override
             public void onResponse(@NonNull Call<List<CoinsListDTO>> call, @NonNull Response<List<CoinsListDTO>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<CoinsListDTO> coins = response.body();
                     StringBuilder builder = new StringBuilder();
-                    for (CoinsListDTO dto : coins) {
+                    for (CoinsListDTO dto : response.body()) {
                         builder.append(dto.symbol()).append(" - ").append(dto.name()).append("\n");
                     }
                     cryptoPricesTextView.setText(builder.toString());
                 } else {
-                    cryptoPricesTextView.setText("Błąd pobierania listy.");
+                    setErrorText("Błąd pobierania listy.");
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<List<CoinsListDTO>> call, @NonNull Throwable t) {
-                cryptoPricesTextView.setText("Błąd: " + t.getMessage());
+                setErrorText("Błąd: " + t.getMessage());
                 Log.e("API_ERROR", "Błąd pobierania listy", t);
             }
         });
@@ -118,35 +121,32 @@ public class MainActivity extends AppCompatActivity {
         String currency = currencyEditText.getText().toString().trim();
 
         if (symbol.isEmpty() || start.isEmpty() || end.isEmpty()) {
-            cryptoPricesTextView.setText("Podaj symbol, datę początkową i końcową.");
+            setErrorText("Podaj symbol, datę początkową i końcową.");
             return;
         }
         if (currency.isEmpty()) {
             currency = "usd";
         }
 
-        ApiService apiService = RetrofitInstance.getRetrofitInstance().create(ApiService.class);
-        Call<List<CoinPriceResponseDTO>> call = apiService.getHistoricalPriceData(symbol, start, end, currency);
-        call.enqueue(new Callback<List<CoinPriceResponseDTO>>() {
+        apiService.getHistoricalPriceData(symbol, start, end, currency).enqueue(new Callback<List<CoinPriceResponseDTO>>() {
             @Override
             public void onResponse(@NonNull Call<List<CoinPriceResponseDTO>> call, @NonNull Response<List<CoinPriceResponseDTO>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<CoinPriceResponseDTO> history = response.body();
                     StringBuilder builder = new StringBuilder();
-                    for (CoinPriceResponseDTO dto : history) {
+                    for (CoinPriceResponseDTO dto : response.body()) {
                         builder.append(dto.date()).append(": ")
                                 .append(dto.price()).append(" ")
                                 .append(dto.currency()).append("\n");
                     }
                     cryptoPricesTextView.setText(builder.toString());
                 } else {
-                    cryptoPricesTextView.setText("Błąd pobierania historii.");
+                    setErrorText("Błąd pobierania historii.");
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<List<CoinPriceResponseDTO>> call, @NonNull Throwable t) {
-                cryptoPricesTextView.setText("Błąd: " + t.getMessage());
+                setErrorText("Błąd: " + t.getMessage());
                 Log.e("API_ERROR", "Błąd pobierania historii", t);
             }
         });
@@ -156,14 +156,12 @@ public class MainActivity extends AppCompatActivity {
         String symbol = symbolEditText.getText().toString().trim();
         String currency = currencyEditText.getText().toString().trim();
         if (symbol.isEmpty()) {
-            cryptoPricesTextView.setText("Podaj symbol kryptowaluty.");
+            setErrorText("Podaj symbol kryptowaluty.");
             return;
         }
         String currencyParam = currency.isEmpty() ? null : currency;
 
-        ApiService apiService = RetrofitInstance.getRetrofitInstance().create(ApiService.class);
-        Call<CoinMarketDataResponseDTO> call = apiService.getCryptocurrencyMarketData(symbol, currencyParam);
-        call.enqueue(new Callback<CoinMarketDataResponseDTO>() {
+        apiService.getCryptocurrencyMarketData(symbol, currencyParam).enqueue(new Callback<CoinMarketDataResponseDTO>() {
             @Override
             public void onResponse(@NonNull Call<CoinMarketDataResponseDTO> call, @NonNull Response<CoinMarketDataResponseDTO> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -175,15 +173,19 @@ public class MainActivity extends AppCompatActivity {
                             + "Waluta: " + dto.currency();
                     cryptoPricesTextView.setText(result);
                 } else {
-                    cryptoPricesTextView.setText("Błąd pobierania danych rynkowych.");
+                    setErrorText("Błąd pobierania danych rynkowych.");
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<CoinMarketDataResponseDTO> call, @NonNull Throwable t) {
-                cryptoPricesTextView.setText("Błąd: " + t.getMessage());
+                setErrorText("Błąd: " + t.getMessage());
                 Log.e("API_ERROR", "Błąd pobierania danych rynkowych", t);
             }
         });
+    }
+
+    private void setErrorText(String message) {
+        cryptoPricesTextView.setText(message);
     }
 }
