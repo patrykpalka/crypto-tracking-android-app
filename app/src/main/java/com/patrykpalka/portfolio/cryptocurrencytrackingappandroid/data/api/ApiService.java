@@ -1,4 +1,9 @@
-package com.patrykpalka.portfolio.cryptocurrencytrackingappandroid;
+package com.patrykpalka.portfolio.cryptocurrencytrackingappandroid.data.api;
+
+import com.patrykpalka.portfolio.cryptocurrencytrackingappandroid.data.model.CoinMarketDataResponseDTO;
+import com.patrykpalka.portfolio.cryptocurrencytrackingappandroid.data.model.CoinPriceResponseDTO;
+import com.patrykpalka.portfolio.cryptocurrencytrackingappandroid.data.model.CoinsListDTO;
+import com.patrykpalka.portfolio.cryptocurrencytrackingappandroid.data.model.CryptoPricesResponseDTO;
 
 import java.util.List;
 import retrofit2.Call;
