@@ -1,4 +1,4 @@
-package com.patrykpalka.portfolio.cryptocurrencytrackingappandroid;
+package com.patrykpalka.portfolio.cryptocurrencytrackingappandroid.data.model;
 
 public record CoinPriceResponseDTO(
         String date,
